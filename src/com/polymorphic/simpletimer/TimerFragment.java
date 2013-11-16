@@ -12,10 +12,11 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class TimerFragment extends Fragment {
+public class TimerFragment extends Fragment implements OnClickListener{
   public final static String TAG = "TimeFragment";
   public final static long ONE_SEC = 1000;
   public enum State {
@@ -29,6 +30,32 @@ public class TimerFragment extends Fragment {
 
   private State currState;
   private Timer timer;
+
+  @Override
+  public void onClick(View v) {
+    switch(v.getId()) {
+      case R.id.hour_text_view:
+      case R.id.minute_text_view:
+      case R.id.second_text_view:
+        onTimeTextClick(v);
+        break;
+      case R.id.btn_1:
+      case R.id.btn_2:
+      case R.id.btn_3:
+      case R.id.btn_4:
+      case R.id.btn_5:
+      case R.id.btn_6:
+      case R.id.btn_7:
+      case R.id.btn_8:
+      case R.id.btn_9:
+      case R.id.btn_0:
+        onNumPadClick(v);
+        break;
+      case R.id.start_btn:
+        onStartClick(v);
+        break;
+    }
+  }
 
   class UpdateTimerTask extends TimerTask {
     private long totalTime;
@@ -77,7 +104,7 @@ public class TimerFragment extends Fragment {
 
         // play sound
         //Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        //Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), alarm);
+        //Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), alarm);
         //r.play();
       }
     }
@@ -99,11 +126,9 @@ public class TimerFragment extends Fragment {
   private void clearTimerBorderHelper(int victimId, int selectedId) {
     TextView currView =
       ((TextView) getActivity().findViewById(victimId));
-    if (selectedId != currView.getId()) {
-      Drawable background = currView.getBackground();
-      if (background != null) {
-        currView.setBackgroundResource(0);
-      }
+    Drawable background = currView.getBackground();
+    if (background != null) {
+      currView.setBackgroundResource(0);
     }
   }
 
@@ -183,8 +208,22 @@ public class TimerFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.timer_fragment, container, false);
 
-    return inflater.inflate(R.layout.timer_fragment, container, false);
+    view.findViewById(R.id.hour_text_view).setOnClickListener(this);
+    view.findViewById(R.id.minute_text_view).setOnClickListener(this);
+    view.findViewById(R.id.second_text_view).setOnClickListener(this);
+    view.findViewById(R.id.btn_0).setOnClickListener(this);
+    view.findViewById(R.id.btn_1).setOnClickListener(this);
+    view.findViewById(R.id.btn_2).setOnClickListener(this);
+    view.findViewById(R.id.btn_3).setOnClickListener(this);
+    view.findViewById(R.id.btn_4).setOnClickListener(this);
+    view.findViewById(R.id.btn_5).setOnClickListener(this);
+    view.findViewById(R.id.btn_6).setOnClickListener(this);
+    view.findViewById(R.id.btn_7).setOnClickListener(this);
+    view.findViewById(R.id.btn_8).setOnClickListener(this);
+    view.findViewById(R.id.btn_9).setOnClickListener(this);
+    view.findViewById(R.id.start_btn).setOnClickListener(this);
+    return view;
   }
-
 }
