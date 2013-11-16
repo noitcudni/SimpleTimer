@@ -37,11 +37,13 @@ public class MainActivity extends ActionBarActivity {
   class UpdateTimerTask extends TimerTask {
     private long totalTime;
     private long timeSoFar;
+
     public UpdateTimerTask(long ms) {
       super();
       totalTime = ms;
       timeSoFar = 0;
     }
+
     public void run() {
       timeSoFar += ONE_SEC;
       Log.d(TAG, "totalTime: " + totalTime + " | timeSoFar: " + timeSoFar);
@@ -142,6 +144,7 @@ public class MainActivity extends ActionBarActivity {
     currTimeTextView = (TextView) view;
     clearTimerBorder(view.getId());
     view.setBackgroundResource(R.drawable.timer_border);
+    currState = State.FIRST_DIGIT;
   }
 
   private String digitBuilder(String input) {
