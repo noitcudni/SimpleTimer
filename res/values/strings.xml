@@ -3,7 +3,7 @@
 
     <string name="app_name">SimpleTimer</string>
     <string name="action_settings">Settings</string>
-    <string name="edit_message">Enter a timer name</string>
+    <string name="timer_name_message">Enter a timer name</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_display_message">Display Message Title</string>
     <string name="action_search">search</string>

@@ -1,19 +1,16 @@
 package com.polymorphic.simpletimer;
 
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.graphics.drawable.Drawable;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class TimerFragment extends Fragment implements OnClickListener{
@@ -23,13 +20,14 @@ public class TimerFragment extends Fragment implements OnClickListener{
     FIRST_DIGIT, SECOND_DIGIT;
   }
 
+  private EditText nameEditTextView;
   private TextView currTimeTextView;
   private TextView hourTimeTextView;
   private TextView minTimeTextView;
   private TextView secTimeTextView;
 
   private State currState;
-  private Timer timer;
+  //private Timer timer;
 
   @Override
   public void onClick(View v) {
@@ -57,62 +55,11 @@ public class TimerFragment extends Fragment implements OnClickListener{
     }
   }
 
-  class UpdateTimerTask extends TimerTask {
-    private long totalTime;
-    private long timeSoFar;
-
-    public UpdateTimerTask(long ms) {
-      super();
-      totalTime = ms;
-      timeSoFar = 0;
-    }
-
-    public void run() {
-      timeSoFar += ONE_SEC;
-      Log.d(TAG, "totalTime: " + totalTime + " | timeSoFar: " + timeSoFar);
-      // Calculate hours, minutes and seconds
-      long remainTime = totalTime - timeSoFar;
-
-      final long hours = remainTime / 3600000;
-      remainTime %= 3600000;
-      final long minutes = remainTime / 60000;
-      remainTime %= 60000;
-      final long seconds = remainTime / 1000;
-      Log.d(TAG, "hours   : " + hours);
-      Log.d(TAG, "minutes : " + minutes);
-      Log.d(TAG, "seconds : " + seconds);
-
-      // Update
-      hourTimeTextView.post(new Runnable() {
-        public void run() {
-          hourTimeTextView.setText(String.format("%02d", hours));
-        }
-      });
-      minTimeTextView.post(new Runnable() {
-        public void run() {
-          minTimeTextView.setText(String.format("%02d", minutes));
-        }
-      });
-      secTimeTextView.post(new Runnable() {
-        public void run() {
-          secTimeTextView.setText(String.format("%02d", seconds));
-        }
-      });
-
-      if (timeSoFar >= totalTime) {
-        timer.cancel();
-
-        // play sound
-        //Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        //Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), alarm);
-        //r.play();
-      }
-    }
-  }
 
   @Override
   public void onStart() {
     super.onStart();
+    nameEditTextView = (EditText) getActivity().findViewById(R.id.timer_name_view);
     hourTimeTextView = (TextView) getActivity().findViewById(R.id.hour_text_view);
     minTimeTextView = (TextView) getActivity().findViewById(R.id.minute_text_view);
     secTimeTextView = (TextView) getActivity().findViewById(R.id.second_text_view);
@@ -194,14 +141,27 @@ public class TimerFragment extends Fragment implements OnClickListener{
   }
 
   public void onStartClick(View view) {
+    String name = nameEditTextView.getText().toString();
     long hour = Long.parseLong(hourTimeTextView.getText().toString());
     long minute = Long.parseLong(minTimeTextView.getText().toString());
     long second = Long.parseLong(secTimeTextView.getText().toString());
+    //String name =
+
     long ms = (hour*60*60 + minute*60 + second) * 1000;
     Log.d(TAG, "onStartClick: " + String.valueOf(ms));
 
-    timer = new Timer();
-    timer.scheduleAtFixedRate(new UpdateTimerTask(ms), ONE_SEC, ONE_SEC);
+    Model model = new Model(name, hour, minute, second);
+    ((MainActivity)getActivity()).saveToModelList(model);
+
+    // replace the current fragment with the list of timer fragment
+    TimerListFragment listFragment = new TimerListFragment();
+    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+    transaction.replace(R.id.fragment_container, listFragment);
+    transaction.addToBackStack(null);
+    transaction.commit();
+
+    //timer = new Timer();
+    //timer.scheduleAtFixedRate(new UpdateTimerTask(ms), ONE_SEC, ONE_SEC);
   }
 
 

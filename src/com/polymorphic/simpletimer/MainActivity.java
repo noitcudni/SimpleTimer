@@ -1,25 +1,28 @@
 package com.polymorphic.simpletimer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
-import android.graphics.drawable.Drawable;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
   public final static String TAG = "MainActivity";
+  private List<Model> modelList;
+  //private HashMap<Model, Timer> modelTimerMap;
   //public final static String EXTRA_MESSAGE = "com.polymorphic.simpletimer";
 
+  public List<Model> getModelList() {
+    return modelList;
+  }
 
+  public void saveToModelList(Model m) {
+    modelList.add(m);
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,24 +36,8 @@ public class MainActivity extends ActionBarActivity {
       getSupportFragmentManager().beginTransaction()
         .add(R.id.fragment_container, timerFragment).commit();
     }
+    modelList = new ArrayList<Model>();
   }
-
-  //@Override
-  //protected void onCreate(Bundle savedInstanceState) {
-    //super.onCreate(savedInstanceState);
-    //setContentView(R.layout.activity_main);
-    ////android.support.v7.app.ActionBar bar = getSupportActionBar();
-    ////bar.setNavigationMode(android.support.v7.app.ActionBar.NAVIGATION_MODE_TABS);
-    //hourTimeTextView = (TextView) findViewById(R.id.hour_text_view);
-    //minTimeTextView = (TextView) findViewById(R.id.minute_text_view);
-    //secTimeTextView = (TextView) findViewById(R.id.second_text_view);
-
-    //if (currTimeTextView == null) {
-      //currTimeTextView = hourTimeTextView;
-    //}
-    //currState = State.FIRST_DIGIT;
-  //}
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {

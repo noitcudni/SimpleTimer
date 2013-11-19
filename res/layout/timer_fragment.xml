@@ -19,11 +19,11 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       >
-    <EditText android:id="@+id/edit_message"
+    <EditText android:id="@+id/timer_name_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="@string/edit_message" />
+        android:hint="@string/timer_name_message" />
   </LinearLayout>
 
   <LinearLayout
