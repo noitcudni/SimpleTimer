@@ -3,25 +3,46 @@ package com.polymorphic.simpletimer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends ActionBarActivity {
   public final static String TAG = "MainActivity";
   private List<Model> modelList;
-  //private HashMap<Model, Timer> modelTimerMap;
-  //public final static String EXTRA_MESSAGE = "com.polymorphic.simpletimer";
+  private HashMap<Model, View> modelViewMap;
 
   public List<Model> getModelList() {
-    return modelList;
+    synchronized(this) {
+      return modelList;
+    }
+  }
+
+  public Model getModel(int pos) {
+    synchronized(this) {
+      return modelList.get(pos);
+    }
   }
 
   public void saveToModelList(Model m) {
-    modelList.add(m);
+    synchronized(this) {
+      modelList.add(m);
+    }
+  }
+
+  public void saveToModelViewMap(Model m, View v) {
+    synchronized(this) {
+      modelViewMap.put(m, v);
+    }
+  }
+
+  public HashMap<Model, View> getModelViewMap() {
+    synchronized(this) {
+      return modelViewMap;
+    }
   }
 
   @Override
@@ -37,6 +58,7 @@ public class MainActivity extends ActionBarActivity {
         .add(R.id.fragment_container, timerFragment).commit();
     }
     modelList = new ArrayList<Model>();
+    modelViewMap = new HashMap<Model, View>();
   }
 
   @Override

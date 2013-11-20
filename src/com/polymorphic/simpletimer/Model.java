@@ -25,7 +25,7 @@ public class Model {
   }
 
   public boolean isTimerOutstanding() {
-    return timeSoFar >= totalTime;
+    return totalTime >= timeSoFar;
   }
   public long getTotalTimeMs() {
     return totalTime;

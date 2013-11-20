@@ -10,7 +10,7 @@ public class TimerListFragment extends ListFragment{
     super.onCreate(savedInstanceState);
 
     MainActivity activity = (MainActivity) getActivity();
-    ArrayAdapter<Model> adapter = new TimerArrayAdapter(activity, activity.getModelList());
+    ArrayAdapter<Model> adapter = new TimerArrayAdapter(activity);
     setListAdapter(adapter);
   }
 

@@ -1,7 +1,9 @@
 package com.polymorphic.simpletimer;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,17 +17,23 @@ import android.widget.TextView;
 
 public class TimerArrayAdapter extends ArrayAdapter<Model> {
   public final static String TAG = "TimeArrayAdapter";
-  private final Context context;
-  private List<Model> modelList;
-  private HashMap<String, UpdateTimerTask> modelTimerMap;
-  private Timer timer;
+  private MainActivity context;
+  //private List<Model> modelList;
+  //private ConcurrentHashMap<String, UpdateTimerTask> modelTimerMap;
+  private static Timer timer = null;
 
-  public TimerArrayAdapter(Context context, List<Model> list) {
-    super(context,R.layout.row_timer,list);
+  public TimerArrayAdapter(MainActivity context) {
+    super(context,R.layout.row_timer, context.getModelList());
     this.context = context;
-    this.modelList = list;
-    this.modelTimerMap = new HashMap<String, UpdateTimerTask>();
-    this.timer = new Timer();
+    //this.modelList = list;
+    //this.modelTimerMap = new ConcurrentHashMap<String, UpdateTimerTask>();
+
+    //this.timer = new Timer(); //timer is always on.
+    if (timer == null) {
+      Log.d(TAG, "constructing a new timer");
+      timer = new Timer();
+      timer.scheduleAtFixedRate(new UpdateTimerTask(), UpdateTimerTask.ONE_SEC, UpdateTimerTask.ONE_SEC);
+    }
   }
 
   static class ViewHolder {
@@ -39,70 +47,97 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
     public final static long ONE_SEC = 1000;
     //private long totalTime;
     //private long timeSoFar;
-    private Model model;
-    private ViewHolder holder;
 
-    public UpdateTimerTask(Model m, ViewHolder h) {
-      super();
-      model = m;
-      holder = h;
-      //totalTime = ms;
-      //timeSoFar = 0;
+    //private Model model;
+    //private ViewHolder holder;
+
+    public UpdateTimerTask() {
+
     }
 
     public void run() {
-      model.incTimer(ONE_SEC);
-      //Log.d(TAG, this); //xxx
+      //List<Model> modelList = context.getModelList();
+      HashMap<Model, View> modelViewMap = context.getModelViewMap();
+      Log.d(TAG, "addr: " + this);
+      Log.d(TAG, "size of the model list: " + modelViewMap.size());
 
-      final HashMap<String, Long> timerMap = model.getHrMinSec();
-      holder.hourTextView.post(new Runnable() {
-        public void run() {
-          holder.hourTextView.setText(String.format("%02d", timerMap.get(Model.HOUR)));
+      int i = 0;
+      for (Map.Entry<Model, View> entry: modelViewMap.entrySet()) {
+        Model m = entry.getKey();
+        View v = entry.getValue();
+        Log.d(TAG, "inside the loop: " + i); //xx
+        i++; //xxx
+
+        final ViewHolder h = (ViewHolder) v.getTag();
+        Log.d(TAG, "isTimerOutStanding: " + m.isTimerOutstanding()); //xxx
+
+        if(m.isTimerOutstanding()) {
+          m.incTimer(ONE_SEC);
+          final HashMap<String, Long> timerMap = m.getHrMinSec();
+
+          h.hourTextView.post(new Runnable() {
+            public void run() {
+              h.hourTextView.setText(String.format("%02d", timerMap.get(Model.HOUR)));
+            }
+          });
+          h.minuteTextView.post(new Runnable() {
+            public void run() {
+              h.minuteTextView.setText(String.format("%02d", timerMap.get(Model.MINUTE)));
+            }
+          });
+          h.secondTextView.post(new Runnable() {
+            public void run() {
+              h.secondTextView.setText(String.format("%02d", timerMap.get(Model.SECOND)));
+            }
+          });
         }
-      });
-      holder.minuteTextView.post(new Runnable() {
-        public void run() {
-          holder.minuteTextView.setText(String.format("%02d", timerMap.get(Model.MINUTE)));
-        }
-      });
-      holder.secondTextView.post(new Runnable() {
-        public void run() {
-          holder.secondTextView.setText(String.format("%02d", timerMap.get(Model.SECOND)));
-        }
-      });
-
-      // Update
-      //hourTimeTextView.post(new Runnable() {
-        //public void run() {
-          //hourTimeTextView.setText(String.format("%02d", hours));
-        //}
-      //});
-      //minTimeTextView.post(new Runnable() {
-        //public void run() {
-          //minTimeTextView.setText(String.format("%02d", minutes));
-        //}
-      //});
-      //secTimeTextView.post(new Runnable() {
-        //public void run() {
-          //secTimeTextView.setText(String.format("%02d", seconds));
-        //}
-      //});
-
-      if (model.isTimerOutstanding()) {
-        cancel();
-
-        //// play sound
-        ////Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        ////Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), alarm);
-        ////r.play();
-      }
+      } //for
     }
+
+    //public UpdateTimerTask(Model m, ViewHolder h) {
+      //super();
+      //model = m;
+      //holder = h;
+      ////totalTime = ms;
+      ////timeSoFar = 0;
+    //}
+
+    //public void run() {
+      //model.incTimer(ONE_SEC);
+      ////Log.d(TAG, this); //xxx
+
+      //final HashMap<String, Long> timerMap = model.getHrMinSec();
+      //holder.hourTextView.post(new Runnable() {
+        //public void run() {
+          //holder.hourTextView.setText(String.format("%02d", timerMap.get(Model.HOUR)));
+        //}
+      //});
+      //holder.minuteTextView.post(new Runnable() {
+        //public void run() {
+          //holder.minuteTextView.setText(String.format("%02d", timerMap.get(Model.MINUTE)));
+        //}
+      //});
+      //holder.secondTextView.post(new Runnable() {
+        //public void run() {
+          //holder.secondTextView.setText(String.format("%02d", timerMap.get(Model.SECOND)));
+        //}
+      //});
+
+      //if (model.isTimerOutstanding()) {
+        //cancel();
+
+        ////// play sound
+        //////Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        //////Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), alarm);
+        //////r.play();
+      //}
+    //}
   }
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     View rView = null;
-    Model model = modelList.get(position);
+    Model model = this.context.getModel(position);
     if (convertView == null) {
       LayoutInflater inflator = LayoutInflater.from(context);
       rView = inflator.inflate(R.layout.row_timer, null);
@@ -123,18 +158,20 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
       rView = convertView;
     }
 
-    Log.d(TAG, "position: " + position);
-    UpdateTimerTask task = modelTimerMap.get(model.getIdString());
-    if (task == null) {
-      // what if the timer is expired?
-      Log.d(TAG, "creating a new timer");
-      ViewHolder h = (ViewHolder) rView.getTag();
+    this.context.saveToModelViewMap(model, rView);
 
-      modelTimerMap.put(model.getIdString(), task);
-      timer.scheduleAtFixedRate(new UpdateTimerTask(model, h), UpdateTimerTask.ONE_SEC, UpdateTimerTask.ONE_SEC);
-    } else {
-      Log.d(TAG, "Got a timer already.");
-    }
+    //Log.d(TAG, "position: " + position);
+    //UpdateTimerTask task = modelTimerMap.get(model.getIdString());
+    //if (task == null) {
+      //// what if the timer is expired?
+      //Log.d(TAG, "creating a new timer");
+      //ViewHolder h = (ViewHolder) rView.getTag();
+
+      //modelTimerMap.put(model.getIdString(), task);
+     //timer.scheduleAtFixedRate(new UpdateTimerTask(model, h), UpdateTimerTask.ONE_SEC, UpdateTimerTask.ONE_SEC);
+    //} else {
+      //Log.d(TAG, "Got a timer already.");
+    //}
 
     return rView;
   }
