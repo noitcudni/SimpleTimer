@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Model {
+  private static int anonymousCount = 0;
   private long totalTime;
   private long timeSoFar;
   private UUID id;
@@ -18,10 +19,15 @@ public class Model {
 
   public Model(String name, long hour, long minute, long second) {
     this.id = UUID.randomUUID();
-    this.name = name;
     alarmPlayed = false;
     totalTime = (hour*60*60 + minute*60 + second) * 1000;
     timeSoFar = 0;
+    if (name == null || name.isEmpty()) {
+      this.name = "Anonymous" + anonymousCount;
+      anonymousCount++;
+    } else {
+      this.name = name;
+    }
   }
 
   public String getIdString() {

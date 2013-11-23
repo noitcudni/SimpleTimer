@@ -60,15 +60,11 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
       Log.d(TAG, "addr: " + this);
       Log.d(TAG, "size of the model list: " + modelViewMap.size());
 
-      int i = 0;
       for (Map.Entry<Model, View> entry: modelViewMap.entrySet()) {
         Model m = entry.getKey();
         View v = entry.getValue();
-        Log.d(TAG, "inside the loop: " + i); //xx
-        i++; //xxx
 
         final ViewHolder h = (ViewHolder) v.getTag();
-        Log.d(TAG, "isTimerOutStanding: " + m.isTimerOutstanding()); //xxx
 
         if(m.isTimerOutstanding()) {
           m.incTimer(ONE_SEC);
@@ -91,11 +87,7 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
           });
         } else {
           if (!m.isAlarmPlayed()) {
-            //Intent intent = new Intent(this, AlarmDialogActivity.class);
             triggerAlarm(m);
-            //Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            //Ringtone r = RingtoneManager.getRingtone(context.getApplicationContext(), alarm);
-            //r.play();
           }
         }
       } //for
