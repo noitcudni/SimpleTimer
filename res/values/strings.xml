@@ -8,4 +8,5 @@
     <string name="title_activity_display_message">Display Message Title</string>
     <string name="action_search">search</string>
     <string name="start">Start!</string>
+    <string name="dismiss_alarm_dialog_label">Alright, I got it.</string>
 </resources>

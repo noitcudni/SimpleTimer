@@ -8,14 +8,18 @@ public class Model {
   private long timeSoFar;
   private UUID id;
   private String name;
+  private boolean alarmPlayed;
   public static String HOUR = "hour";
   public static String MINUTE = "minute";
   public static String SECOND = "second";
+  public static String ID_KEY = "MODEL_ID_KEY"; // used by bundle when communicating between activities
+  public static String NAME_KEY = "MODEL_NAME"; // used by bundle when communicating between activities
 
 
   public Model(String name, long hour, long minute, long second) {
     this.id = UUID.randomUUID();
     this.name = name;
+    alarmPlayed = false;
     totalTime = (hour*60*60 + minute*60 + second) * 1000;
     timeSoFar = 0;
   }
@@ -29,6 +33,13 @@ public class Model {
   }
   public long getTotalTimeMs() {
     return totalTime;
+  }
+
+  public boolean isAlarmPlayed() {
+    return alarmPlayed;
+  }
+  public void playAlarm() {
+    this.alarmPlayed = true;
   }
 
   public String getName() {

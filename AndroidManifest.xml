@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.polymorphic.simpletimer.AlarmDialogActivity"/>
         <activity
             android:name="com.polymorphic.simpletimer.DisplayMessageActivity"
             android:label="@string/title_activity_display_message"

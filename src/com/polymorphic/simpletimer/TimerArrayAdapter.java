@@ -1,13 +1,12 @@
 package com.polymorphic.simpletimer;
 
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,48 +89,29 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
               h.secondTextView.setText(String.format("%02d", timerMap.get(Model.SECOND)));
             }
           });
+        } else {
+          if (!m.isAlarmPlayed()) {
+            //Intent intent = new Intent(this, AlarmDialogActivity.class);
+            triggerAlarm(m);
+            //Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+            //Ringtone r = RingtoneManager.getRingtone(context.getApplicationContext(), alarm);
+            //r.play();
+          }
         }
       } //for
     }
+  }
 
-    //public UpdateTimerTask(Model m, ViewHolder h) {
-      //super();
-      //model = m;
-      //holder = h;
-      ////totalTime = ms;
-      ////timeSoFar = 0;
-    //}
+  private void triggerAlarm(Model m) {
+    m.playAlarm();
+    Intent intent = new Intent(context, AlarmDialogActivity.class);
 
-    //public void run() {
-      //model.incTimer(ONE_SEC);
-      ////Log.d(TAG, this); //xxx
+    Bundle b = new Bundle();
+    b.putString(Model.ID_KEY, m.getIdString());
+    b.putString(Model.NAME_KEY, m.getName());
+    intent.putExtras(b);
 
-      //final HashMap<String, Long> timerMap = model.getHrMinSec();
-      //holder.hourTextView.post(new Runnable() {
-        //public void run() {
-          //holder.hourTextView.setText(String.format("%02d", timerMap.get(Model.HOUR)));
-        //}
-      //});
-      //holder.minuteTextView.post(new Runnable() {
-        //public void run() {
-          //holder.minuteTextView.setText(String.format("%02d", timerMap.get(Model.MINUTE)));
-        //}
-      //});
-      //holder.secondTextView.post(new Runnable() {
-        //public void run() {
-          //holder.secondTextView.setText(String.format("%02d", timerMap.get(Model.SECOND)));
-        //}
-      //});
-
-      //if (model.isTimerOutstanding()) {
-        //cancel();
-
-        ////// play sound
-        //////Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        //////Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), alarm);
-        //////r.play();
-      //}
-    //}
+    context.startActivity(intent);
   }
 
   @Override
