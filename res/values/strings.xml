@@ -9,6 +9,6 @@
     <string name="start">Start!</string>
     <string name="timer_recording">Recording your beautiful yet alarming voice.</string>
     <string name="btn_stop_recording">Stop Recording</string>
-    <string name="record">Record a New Alarm</string>
+    <string name="record">Record a New Alarm Tone</string>
     <string name="dismiss_alarm_dialog_label">Alright, I got it.</string>
 </resources>
