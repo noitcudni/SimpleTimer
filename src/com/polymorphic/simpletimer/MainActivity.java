@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
     //android.support.v7.app.ActionBar bar = getSupportActionBar();
     //bar.setNavigationMode(android.support.v7.app.ActionBar.NAVIGATION_MODE_TABS);
 
-    if (findViewById(R.id.fragment_container) != null) {
+    if (savedInstanceState == null && findViewById(R.id.fragment_container) != null) {
       TimerFragment timerFragment = new TimerFragment();
       getSupportFragmentManager().beginTransaction()
         .add(R.id.fragment_container, timerFragment).commit();
@@ -90,5 +90,12 @@ public class MainActivity extends ActionBarActivity {
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle savedInstanceState) {
+    // save custom states
+    Log.d(TAG, "calling MainActivity:onSaveInstanceState");
+    super.onSaveInstanceState(savedInstanceState);
   }
 }

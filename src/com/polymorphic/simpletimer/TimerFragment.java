@@ -1,6 +1,5 @@
 package com.polymorphic.simpletimer;
 
-
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +15,11 @@ import android.widget.TextView;
 public class TimerFragment extends Fragment implements OnClickListener{
   public final static String TAG = "TimeFragment";
   public final static long ONE_SEC = 1000;
+  private static final String STATE_NAME = "name_state";
+  private static final String STATE_HOUR = "hour_state";
+  private static final String STATE_MINUTE = "minute_state";
+  private static final String STATE_SECOND = "second_state";
+
   public enum State {
     FIRST_DIGIT, SECOND_DIGIT;
   }
@@ -57,17 +61,10 @@ public class TimerFragment extends Fragment implements OnClickListener{
 
 
   @Override
-  public void onStart() {
+  public void onStart()
+  {
     super.onStart();
-    nameEditTextView = (EditText) getActivity().findViewById(R.id.timer_name_view);
-    hourTimeTextView = (TextView) getActivity().findViewById(R.id.hour_text_view);
-    minTimeTextView = (TextView) getActivity().findViewById(R.id.minute_text_view);
-    secTimeTextView = (TextView) getActivity().findViewById(R.id.second_text_view);
-
-    if (currTimeTextView == null) {
-      currTimeTextView = hourTimeTextView;
-    }
-    currState = State.FIRST_DIGIT;
+    Log.d(TAG, this + ": onStart()");
   }
 
   private void clearTimerBorderHelper(int victimId, int selectedId) {
@@ -145,7 +142,6 @@ public class TimerFragment extends Fragment implements OnClickListener{
     long hour = Long.parseLong(hourTimeTextView.getText().toString());
     long minute = Long.parseLong(minTimeTextView.getText().toString());
     long second = Long.parseLong(secTimeTextView.getText().toString());
-    //String name =
 
     long ms = (hour*60*60 + minute*60 + second) * 1000;
     Log.d(TAG, "onStartClick: " + String.valueOf(ms));
@@ -166,8 +162,9 @@ public class TimerFragment extends Fragment implements OnClickListener{
 
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    Log.d(TAG, "calling TimerFragment:onCreateView"); //xxx
+    //this.setRetainInstance(true);
     View view = inflater.inflate(R.layout.timer_fragment, container, false);
 
     view.findViewById(R.id.hour_text_view).setOnClickListener(this);
@@ -184,6 +181,107 @@ public class TimerFragment extends Fragment implements OnClickListener{
     view.findViewById(R.id.btn_8).setOnClickListener(this);
     view.findViewById(R.id.btn_9).setOnClickListener(this);
     view.findViewById(R.id.start_btn).setOnClickListener(this);
+
+    nameEditTextView = (EditText) view.findViewById(R.id.timer_name_view);
+    hourTimeTextView = (TextView) view.findViewById(R.id.hour_text_view);
+    minTimeTextView = (TextView) view.findViewById(R.id.minute_text_view);
+    secTimeTextView = (TextView) view.findViewById(R.id.second_text_view);
+
+    if (currTimeTextView == null) {
+      currTimeTextView = hourTimeTextView;
+    }
+    currState = State.FIRST_DIGIT;
     return view;
   }
+
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState) {
+    Log.d(TAG, "calling TimerFragment:onActivityCreated");//xxx
+    super.onActivityCreated(savedInstanceState);
+
+    if (savedInstanceState != null) {
+      String name = savedInstanceState.getString(STATE_NAME);
+      String hour = savedInstanceState.getString(STATE_HOUR);
+      String minute = savedInstanceState.getString(STATE_MINUTE);
+      String second = savedInstanceState.getString(STATE_SECOND);
+      //Log.d(TAG, "restoring minute: " + minute); //xxx
+      nameEditTextView.setText(name);
+      hourTimeTextView.setText(hour);
+      minTimeTextView.setText(minute);
+      secTimeTextView.setText(second);
+    }
+    //
+    //((TextView) getActivity().findViewById(R.id.hour_text_view)).setText("11");
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle savedInstanceState) {
+    // save custom states
+    String name = nameEditTextView.getText().toString();
+    String hour = hourTimeTextView.getText().toString();
+    String minute = minTimeTextView.getText().toString();
+    String second = secTimeTextView.getText().toString();
+
+    //Log.d(TAG, "storing hour   :" + hour); //xxx
+    //Log.d(TAG, "storing minute :" + minute); //xxx
+    //Log.d(TAG, "storing second :" + second); //xxx
+
+    savedInstanceState.putString(STATE_NAME, name);
+    savedInstanceState.putString(STATE_HOUR, hour);
+    savedInstanceState.putString(STATE_MINUTE, minute);
+    savedInstanceState.putString(STATE_SECOND, second);
+
+    Log.d(TAG, "calling TimerFragment:onSaveInstanceState");
+    super.onSaveInstanceState(savedInstanceState);
+  }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState)
+  {
+    super.onViewCreated(view, savedInstanceState);
+    Log.d(TAG, this + ": onViewCreated()");
+  }
+
+  @Override
+  public void onDestroyView()
+  {
+    super.onDestroyView();
+    Log.d(TAG, this + ": onDestroyView()");
+  }
+
+  @Override
+  public void onDetach()
+  {
+    super.onDetach();
+    Log.d(TAG, this + ": onDetach()");
+  }
+
+  @Override
+  public void onResume()
+  {
+    super.onResume();
+    Log.d(TAG, this + ": onResume()");
+  }
+
+  @Override
+  public void onPause()
+  {
+    super.onPause();
+    Log.d(TAG, this + ": onPause()");
+  }
+
+  @Override
+  public void onStop()
+  {
+    super.onStop();
+    Log.d(TAG, this + ": onStop()");
+  }
+
+  @Override
+  public void onDestroy()
+  {
+    super.onDestroy();
+    Log.d(TAG, this + ": onDestroy()");
+  }
 }
+
