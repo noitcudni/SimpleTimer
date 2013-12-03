@@ -1,5 +1,6 @@
 package com.polymorphic.simpletimer;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
   private static final String STATE_MINUTE = "minute_state";
   private static final String STATE_SECOND = "second_state";
   private static final String STATE_DIGIT_STATE = "digit_state";
+  private OnClickListener OnRecordClicker;
 
   public enum State {
     FIRST_DIGIT, SECOND_DIGIT;
@@ -61,6 +63,14 @@ public class TimerFragment extends Fragment implements OnClickListener{
     }
   }
 
+  public TimerFragment() {
+    OnRecordClicker = new OnClickListener() {
+      public void onClick(View v) {
+        Intent intent = new Intent(getActivity(), RecordAlarmActivity.class);
+        getActivity().startActivity(intent);
+      }
+    };
+  }
 
   @Override
   public void onStart()
@@ -178,6 +188,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
     view.findViewById(R.id.btn_8).setOnClickListener(this);
     view.findViewById(R.id.btn_9).setOnClickListener(this);
     view.findViewById(R.id.start_btn).setOnClickListener(this);
+    view.findViewById(R.id.record_btn).setOnClickListener(this.OnRecordClicker);
 
     nameEditTextView = (EditText) view.findViewById(R.id.timer_name_view);
     hourTimeTextView = (TextView) view.findViewById(R.id.hour_text_view);
