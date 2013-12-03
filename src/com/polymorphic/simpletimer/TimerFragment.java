@@ -20,6 +20,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
   private static final String STATE_HOUR = "hour_state";
   private static final String STATE_MINUTE = "minute_state";
   private static final String STATE_SECOND = "second_state";
+  private static final String STATE_DIGIT_STATE = "digit_state";
 
   public enum State {
     FIRST_DIGIT, SECOND_DIGIT;
@@ -31,7 +32,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
   private TextView minTimeTextView;
   private TextView secTimeTextView;
 
-  private State currState;
+  private State currDigitState;
   //private Timer timer;
 
   @Override
@@ -91,12 +92,12 @@ public class TimerFragment extends Fragment implements OnClickListener{
     currTimeTextView = (TextView) view;
     clearTimerBorder(view.getId());
     view.setBackgroundResource(R.drawable.timer_border);
-    currState = State.FIRST_DIGIT;
+    currDigitState = State.FIRST_DIGIT;
   }
 
   private String digitBuilder(String input) {
     String first_digit;
-    if (currState == State.FIRST_DIGIT)
+    if (currDigitState == State.FIRST_DIGIT)
       first_digit = "0";
     else
       first_digit = Character.valueOf(currTimeTextView.getText().charAt(1)).toString();
@@ -115,9 +116,9 @@ public class TimerFragment extends Fragment implements OnClickListener{
   }
 
   private void transitionState() {
-    switch (currState) {
+    switch (currDigitState) {
       case FIRST_DIGIT:
-        currState = State.SECOND_DIGIT;
+        currDigitState = State.SECOND_DIGIT;
         break;
       case SECOND_DIGIT:
         if( currTimeTextView.getId() == R.id.hour_text_view) {
@@ -126,7 +127,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
           selectTimeText(getActivity().findViewById(R.id.second_text_view));
         } else if (currTimeTextView.getId() == R.id.second_text_view) {
         }
-        currState = State.FIRST_DIGIT;
+        currDigitState = State.FIRST_DIGIT;
         break;
     }
   }
@@ -156,16 +157,11 @@ public class TimerFragment extends Fragment implements OnClickListener{
     transaction.replace(R.id.fragment_container, listFragment);
     transaction.addToBackStack(null);
     transaction.commit();
-
-    //timer = new Timer();
-    //timer.scheduleAtFixedRate(new UpdateTimerTask(ms), ONE_SEC, ONE_SEC);
   }
 
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    Log.d(TAG, "calling TimerFragment:onCreateView"); //xxx
-    //this.setRetainInstance(true);
     View view = inflater.inflate(R.layout.timer_fragment, container, false);
 
     view.findViewById(R.id.hour_text_view).setOnClickListener(this);
@@ -191,13 +187,12 @@ public class TimerFragment extends Fragment implements OnClickListener{
     if (currTimeTextView == null) {
       currTimeTextView = hourTimeTextView;
     }
-    currState = State.FIRST_DIGIT;
+    currDigitState = State.FIRST_DIGIT;
     return view;
   }
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
-    Log.d(TAG, "calling TimerFragment:onActivityCreated");//xxx
     super.onActivityCreated(savedInstanceState);
 
     if (savedInstanceState != null) {
@@ -206,7 +201,6 @@ public class TimerFragment extends Fragment implements OnClickListener{
       String hour = savedInstanceState.getString(STATE_HOUR);
       String minute = savedInstanceState.getString(STATE_MINUTE);
       String second = savedInstanceState.getString(STATE_SECOND);
-      //Log.d(TAG, "restoring minute: " + minute); //xxx
       nameEditTextView.setText(name);
       hourTimeTextView.setText(hour);
       minTimeTextView.setText(minute);
@@ -220,6 +214,8 @@ public class TimerFragment extends Fragment implements OnClickListener{
       } else if (selTimeState.equals(STATE_SECOND)) {
         selectTimeText(secTimeTextView);
       }
+
+      currDigitState = State.values()[savedInstanceState.getInt(STATE_DIGIT_STATE)];
     }
   }
 
@@ -248,7 +244,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
         break;
     }
 
-    Log.d(TAG, "calling TimerFragment:onSaveInstanceState");
+    savedInstanceState.putInt(STATE_DIGIT_STATE, currDigitState.ordinal());
     super.onSaveInstanceState(savedInstanceState);
   }
 }
