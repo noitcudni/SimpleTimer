@@ -9,10 +9,12 @@ public class Model {
   private long timeSoFar;
   private UUID id;
   private String name;
+  private String customRingToneAbsolutePath;
   private boolean alarmPlayed;
   public static String HOUR = "hour";
   public static String MINUTE = "minute";
   public static String SECOND = "second";
+  public static String RING_TONE_PATH_KEY = "RING_TONE_PATH_KEY";
   public static String ID_KEY = "MODEL_ID_KEY"; // used by bundle when communicating between activities
   public static String NAME_KEY = "MODEL_NAME"; // used by bundle when communicating between activities
 
@@ -28,6 +30,14 @@ public class Model {
     } else {
       this.name = name;
     }
+  }
+
+  public void setCustomRingToneAbsolutePath(String path) {
+    customRingToneAbsolutePath = path;
+  }
+
+  public String getCustomRingToneAbsolutePath() {
+    return customRingToneAbsolutePath;
   }
 
   public String getIdString() {

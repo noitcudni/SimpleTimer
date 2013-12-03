@@ -1,5 +1,8 @@
 package com.polymorphic.simpletimer;
 
+
+import java.io.File;
+
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,6 +25,11 @@ public class TimerFragment extends Fragment implements OnClickListener{
   private static final String STATE_MINUTE = "minute_state";
   private static final String STATE_SECOND = "second_state";
   private static final String STATE_DIGIT_STATE = "digit_state";
+  private static final String STATE_CUSTOM_RING_TONE_DIR = "custom_ring_tone_dir_state";
+  private static final String STATE_CUSTOM_RING_TONE_FILENAME = "custom_ring_tone_filename_state";
+
+  private String customRingToneDir;
+  private String customRingToneFilename;
   private OnClickListener OnRecordClicker;
 
   public enum State {
@@ -66,6 +74,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
   public TimerFragment() {
     OnRecordClicker = new OnClickListener() {
       public void onClick(View v) {
+        RecordAlarmDataHolder.newInstance(); // create a new singleton instance
         Intent intent = new Intent(getActivity(), RecordAlarmActivity.class);
         getActivity().startActivity(intent);
       }
@@ -77,6 +86,14 @@ public class TimerFragment extends Fragment implements OnClickListener{
   {
     super.onStart();
     Log.d(TAG, this + ": onStart()");
+    try {
+      setAlarmRingTonePath(RecordAlarmDataHolder.instance().getFilePath(), RecordAlarmDataHolder.instance().getFilename());
+      RecordAlarmDataHolder.destroyInstance();
+    } catch(DataHolderInstanceNotFoundException e) {
+      customRingToneDir = null;
+      customRingToneFilename = null;
+      Log.d(TAG, e.getMessage());
+    }
   }
 
   private void clearTimerBorderHelper(int victimId, int selectedId) {
@@ -149,6 +166,17 @@ public class TimerFragment extends Fragment implements OnClickListener{
     transitionState();
   }
 
+  private String renameCustomRingtone(String name) {
+    String r = null;
+    if (customRingToneDir != null && customRingToneFilename != null) {
+      File srcFile = new File(customRingToneDir, customRingToneFilename);
+      File destFile = new File(customRingToneDir, name + ".3gp");
+      srcFile.renameTo(destFile);
+      r = destFile.getAbsolutePath();
+    }
+    return r;
+  }
+
   public void onStartClick(View view) {
     String name = nameEditTextView.getText().toString();
     long hour = Long.parseLong(hourTimeTextView.getText().toString());
@@ -160,6 +188,10 @@ public class TimerFragment extends Fragment implements OnClickListener{
 
     Model model = new Model(name, hour, minute, second);
     ((MainActivity)getActivity()).saveToModelList(model);
+    String ringToneAbsPath = renameCustomRingtone(model.getName());
+    if (ringToneAbsPath != null) {
+      model.setCustomRingToneAbsolutePath(ringToneAbsPath);
+    }
 
     // replace the current fragment with the list of timer fragment
     TimerListFragment listFragment = new TimerListFragment();
@@ -172,6 +204,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    Log.d(TAG, "Calling onCreateView");//xxx
     View view = inflater.inflate(R.layout.timer_fragment, container, false);
 
     view.findViewById(R.id.hour_text_view).setOnClickListener(this);
@@ -206,6 +239,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
 
+    Log.d(TAG, "calling onActivityCreated");
     if (savedInstanceState != null) {
       // restore state from onSaveInstanceState
       String name = savedInstanceState.getString(STATE_NAME);
@@ -225,6 +259,8 @@ public class TimerFragment extends Fragment implements OnClickListener{
       } else if (selTimeState.equals(STATE_SECOND)) {
         selectTimeText(secTimeTextView);
       }
+      customRingToneDir = savedInstanceState.getString(STATE_CUSTOM_RING_TONE_DIR);
+      customRingToneFilename = savedInstanceState.getString(STATE_CUSTOM_RING_TONE_FILENAME);
 
       currDigitState = State.values()[savedInstanceState.getInt(STATE_DIGIT_STATE)];
     }
@@ -242,6 +278,8 @@ public class TimerFragment extends Fragment implements OnClickListener{
     savedInstanceState.putString(STATE_HOUR, hour);
     savedInstanceState.putString(STATE_MINUTE, minute);
     savedInstanceState.putString(STATE_SECOND, second);
+    savedInstanceState.putString(STATE_CUSTOM_RING_TONE_DIR, customRingToneDir);
+    savedInstanceState.putString(STATE_CUSTOM_RING_TONE_FILENAME, customRingToneFilename);
 
     switch(currTimeTextView.getId()) {
       case R.id.hour_text_view:
@@ -258,5 +296,47 @@ public class TimerFragment extends Fragment implements OnClickListener{
     savedInstanceState.putInt(STATE_DIGIT_STATE, currDigitState.ordinal());
     super.onSaveInstanceState(savedInstanceState);
   }
+
+  public void setAlarmRingTonePath(String directoryPath, String filename) {
+    Log.d(TAG, "directoryPath: " + directoryPath); //xxx
+    Log.d(TAG, "filename: " + filename); //xxx
+    customRingToneDir = directoryPath;
+    customRingToneFilename = filename;
+  }
+
+  //@Override
+  //public void onDetach()
+  //{
+    //super.onDetach();
+    //Log.d(TAG, this + ": onDetach()");
+  //}
+
+  //@Override
+  //public void onResume()
+  //{
+    //super.onResume();
+    //Log.d(TAG, this + ": onResume()");
+  //}
+
+  //@Override
+  //public void onPause()
+  //{
+    //super.onPause();
+    //Log.d(TAG, this + ": onPause()");
+  //}
+
+  //@Override
+  //public void onStop()
+  //{
+    //super.onStop();
+    //Log.d(TAG, this + ": onStop()");
+  //}
+
+  //@Override
+  //public void onDestroy()
+  //{
+    //super.onDestroy();
+    //Log.d(TAG, this + ": onDestroy()");
+  //}
 }
 

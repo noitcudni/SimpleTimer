@@ -57,8 +57,8 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
     public void run() {
       //List<Model> modelList = context.getModelList();
       HashMap<Model, View> modelViewMap = context.getModelViewMap();
-      Log.d(TAG, "addr: " + this);
-      Log.d(TAG, "size of the model list: " + modelViewMap.size());
+      //Log.d(TAG, "addr: " + this);
+      //Log.d(TAG, "size of the model list: " + modelViewMap.size());
 
       for (Map.Entry<Model, View> entry: modelViewMap.entrySet()) {
         Model m = entry.getKey();
@@ -101,6 +101,10 @@ public class TimerArrayAdapter extends ArrayAdapter<Model> {
     Bundle b = new Bundle();
     b.putString(Model.ID_KEY, m.getIdString());
     b.putString(Model.NAME_KEY, m.getName());
+    String customRingTonePath = m.getCustomRingToneAbsolutePath();
+    if (customRingTonePath != null) {
+      b.putString(Model.RING_TONE_PATH_KEY, customRingTonePath);
+    }
     intent.putExtras(b);
 
     context.startActivity(intent);
