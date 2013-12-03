@@ -1,9 +1,10 @@
 package com.polymorphic.simpletimer;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Model {
+public class Model implements Serializable{
   private static int anonymousCount = 0;
   private long totalTime;
   private long timeSoFar;

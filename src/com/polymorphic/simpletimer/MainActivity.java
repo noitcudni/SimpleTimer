@@ -13,7 +13,8 @@ import android.view.View;
 
 public class MainActivity extends ActionBarActivity {
   public final static String TAG = "MainActivity";
-  private List<Model> modelList;
+  private static final String STATE_MODEL_LIST = "model_list_state";
+  private ArrayList<Model> modelList;
   private HashMap<Model, View> modelViewMap;
 
   public List<Model> getModelList() {
@@ -48,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    Log.d(TAG, "calling OnCreate");//xxx
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     //android.support.v7.app.ActionBar bar = getSupportActionBar();
@@ -58,7 +60,18 @@ public class MainActivity extends ActionBarActivity {
       getSupportFragmentManager().beginTransaction()
         .add(R.id.fragment_container, timerFragment).commit();
     }
-    modelList = new ArrayList<Model>();
+
+    if (savedInstanceState != null) {
+      modelList = (ArrayList<Model>) savedInstanceState.getSerializable(STATE_MODEL_LIST);
+    }
+
+    if (modelList == null) {
+      Log.d(TAG, "modelList is null. create a new one."); //xxx
+      modelList = new ArrayList<Model>();
+    } else {
+      Log.d(TAG, "modelList's size : " + modelList.size()); //xxx
+    }
+
     modelViewMap = new HashMap<Model, View>();
   }
 
@@ -94,13 +107,53 @@ public class MainActivity extends ActionBarActivity {
 
   @Override
   public void onSaveInstanceState(Bundle savedInstanceState) {
-    // save custom states
     Log.d(TAG, "calling MainActivity:onSaveInstanceState");
+
     super.onSaveInstanceState(savedInstanceState);
+    savedInstanceState.putSerializable(STATE_MODEL_LIST, modelList);
+  }
+
+  //@Override
+  //public void onRestoreInstanceState(Bundle savedInstanceState) {
+    //Log.d(TAG, "calling onRestoreInstanceState");
+    //super.onRestoreInstanceState(savedInstanceState);
+    //modelList = (ArrayList<Model>) savedInstanceState.getSerializable(STATE_MODEL_LIST);
+  //}
+
+  @Override
+  protected void onStart() {
+    Log.d(TAG, "calling onStart");
+    super.onStart();
   }
 
   @Override
-  public void onRestoreInstanceState(Bundle savedInstanceState) {
-    super.onRestoreInstanceState(savedInstanceState);
+  protected void onRestart() {
+    Log.d(TAG, "calling onRestart");
+    super.onRestart();
   }
+
+  @Override
+  protected void onResume() {
+    Log.d(TAG, "calling onResume");
+    super.onResume();
+  }
+
+  @Override
+  protected void onPause() {
+    Log.d(TAG, "calling onPause");
+    super.onPause();
+  }
+
+  @Override
+  protected void onStop() {
+    Log.d(TAG, "calling onStop");
+    super.onStop();
+  }
+
+  @Override
+  protected void onDestroy() {
+    Log.d(TAG, "calling onDestroy");
+    super.onDestroy();
+  }
+
 }

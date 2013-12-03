@@ -268,6 +268,7 @@ public class TimerFragment extends Fragment implements OnClickListener{
 
   @Override
   public void onSaveInstanceState(Bundle savedInstanceState) {
+    super.onSaveInstanceState(savedInstanceState);
     // save custom states
     String name = nameEditTextView.getText().toString();
     String hour = hourTimeTextView.getText().toString();
@@ -294,7 +295,6 @@ public class TimerFragment extends Fragment implements OnClickListener{
     }
 
     savedInstanceState.putInt(STATE_DIGIT_STATE, currDigitState.ordinal());
-    super.onSaveInstanceState(savedInstanceState);
   }
 
   public void setAlarmRingTonePath(String directoryPath, String filename) {
